@@ -1,3 +1,4 @@
+-- WEEK: 01
 show databases;
 create database IF NOT exists Insurance;
 show databases;
@@ -121,7 +122,32 @@ select driver_id
 from Participated
 where damage_amount >=25000;
 
+-- WEEK:02
 
+-- LIST THE ENTIRE PARTICIPATED RELATION IN THE DESCENDING ORDER OF DAMAGE AMOUNT
+SELECT *
+FROM Participated
+ORDER BY damage_amount DESC;
+
+-- FIND THE AVERAGE DAMAGE AMOUNT
+SELECT AVG(damage_amount) AS avg_damage
+FROM Participated;
+
+-- LIST THE NAME OF DRIVERS WHOSE DAMAGE IS GREATER THAN THE AVERAGE DAMAGE AMOUNT
+SELECT name
+FROM Person
+WHERE driver_id IN (
+  SELECT driver_id
+  FROM Participated
+  WHERE damage_amount = (
+    SELECT MAX(damage_amount)
+    FROM Participated
+  )
+); 
+
+-- FIND MAXIMUM DAMAGE AMOUNT
+SELECT MAX(damage_amount) AS max_damage
+FROM Participated;
 
 
 
