@@ -92,3 +92,66 @@ INSERT INTO INCENTIVES VALUES
 (1006, '2024-06-18', 900.00),
 (1001, '2024-07-01', 500.00);
 select * from incentives;
+
+SELECT DISTINCT a.EMPNO
+FROM ASSIGNED_TO a
+JOIN PROJECT p ON a.PNO = p.PNO
+WHERE p.PLOC IN ('Bengaluru','Hyderabad','Mysuru');
+
+SELECT e.EMPNO
+FROM EMPLOYEE e
+LEFT JOIN INCENTIVES i ON e.EMPNO = i.EMPNO
+WHERE i.EMPNO IS NULL;
+
+SELECT e.ENAME, e.EMPNO, e.DEPTNO, a.JOB_ROLE,
+       d.DLOC AS DEPT_LOCATION, p.PLOC AS PROJECT_LOCATION
+FROM EMPLOYEE e
+JOIN DEPT d ON e.DEPTNO = d.DEPTNO
+JOIN ASSIGNED_TO a ON e.EMPNO = a.EMPNO
+JOIN PROJECT p ON a.PNO = p.PNO
+WHERE d.DLOC = p.PLOC;
+
+      -- MORE QUERIES --
+
+select e.Ename as manager_name, count(m.EmpNo) as Num_Employees 
+from Employee e 
+Join Employee m on e.EmpNo = m.Mgr_no
+Group by e.EName 
+having count(m.EmpNo)=(
+select max(cnt)
+from (
+select count(Mgr_No) as cnt 
+from Employee 
+where Mgr_No is not null 
+Group by Mgr_No
+) as temp
+);
+
+select e.EName as Manager_Name 
+from Employee e 
+where e.EmpNo in (select distinct Mgr_No from Employee where Mgr_No is not null)
+and e.sal > (
+select avg(s.sal)
+from employee s 
+where s.Mgr_no = e.empNo
+);  
+
+select e.ename as second_level_manager,d.dname as department 
+from employee e 
+join dept d on e.deptno = d.deptno
+where e.mgr_no in (
+select empno from employee where mgr_no is null
+);
+
+select empno,incentive_date,incentive_amount
+from incentives
+where year(incentive_date)= 2019 and month(incentive_date)=1
+order by incentive_amount desc 
+limit 1 offset 1;
+
+select e.ename as employee_name,m.ename as manager_name ,
+d.dname as department 
+from employee e 
+join employee m on e.mgr_no = m.empno
+join dept d on e.deptno = d.deptno 
+where e.deptno = m.deptno;
